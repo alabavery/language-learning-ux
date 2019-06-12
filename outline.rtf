@@ -1,0 +1,54 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;\csgray\c100000;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid2\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid3\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li2160\lin2160 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid4\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li2880\lin2880 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid5\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li3600\lin3600 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid6\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li4320\lin4320 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\margl1440\margr1440\vieww17160\viewh12420\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\b\fs24 \cf0 End goal: Get a bunch of clips of stuff that you know 90% of the words of
+\b0 \
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}need to know all the words you know\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}you have to write out all of the words you know\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}when you enter a string, you will be presented with words the program knows that are that same string (or maybe even fuzzy matched to close to the string?) along with relevant info about those choices - meaning, part of speech, plurality, tense, gender, etc.\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural\partightenfactor0
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}or upload a csv? might be easier. but wouldn\'92t allow instant feedback of \'93hey we know that word already, don\'92t worry about filling out all the stuff for it\
+{\listtext	\uc0\u8259 	}in any case, frontend would need to request from the backend:\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural\partightenfactor0
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}either (a): what are all the words you  know and their relevant data\
+\pard\tx3820\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural\partightenfactor0
+\ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}or what are all the words you know and request each word\'92s relevant data as the user enters it\
+\pard\tx3100\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li3600\fi-3600\pardirnatural\partightenfactor0
+\ls1\ilvl4\cf0 {\listtext	\uc0\u8259 	}or (b) do you know this word, etc?\
+{\listtext	\uc0\u8259 	}(a) sounds better, since it would end up being a quicker user experience\
+{\listtext	\uc0\u8259 	}in (a) backend should provide:\
+\pard\tx3820\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li4320\fi-4320\pardirnatural\partightenfactor0
+\ls1\ilvl5\cf0 {\listtext	\uc0\u8259 	}strings I know: a dict of strings as keys and the number of times they appear in the list of the top 5000 most frequent strings as values\'85 these could also just be hardcoded in the fronted\
+{\listtext	\uc0\u8259 	}words I know: a dict of strings as keys and an array of the words as values, where a word is a unique part of speech, meaning, plurality, etc. \
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}you either select one of the existing choices or choose to enter the word as a new word, at which point you are prompted to provide the relevant info - meaning, part of speech, plurality, tense, gender, etc.\
+\pard\tx2380\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2880\fi-2880\pardirnatural\partightenfactor0
+\ls1\ilvl3\cf0 {\listtext	\uc0\u8259 	}if word is newly entered, send request to create new word. in response receive created word obj\
+{\listtext	\uc0\u8259 	}send request to backend with that word (either the newly created one or the existing one) and user id\'85 backend now knows that user knows word\
+\pard\tx1660\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li2160\fi-2160\pardirnatural\partightenfactor0
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}no words two or fewer characters\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}need to know what words clips contain\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}you upload the transcript\
+{\listtext	\uc0\u8259 	}strings two or fewer characters ignored\
+{\listtext	\uc0\u8259 	}we have list of most common ~5000(?) strings in the language. strings that meet the following can be catalogued without user help: (1) with just one unique entry in that 5000 and (2) another user has already saved it as a known word.  For words that do not meet these two criteria, user must tell us the meaning, as well as the relevant info.  Optionally, they could skip it, and that phrase won\'92t be usable in audio.  Allow users to \'93go through backlog\'94 later to make these phrases usable.\
+{\listtext	\uc0\u8259 	}divide transcript up using delimiters\'85 or maybe allow user input in the delimiting\'85 User must then follow along with audio and tell us the relevant audio section for each division of the transcript.\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}need to provide tracks that contain your audio\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}need to provide albums of your audio\
+{\listtext	\uc0\u8259 	}need to provide single track of all audio\
+{\listtext	\uc0\u8259 	}therefore must be able to select clips that contain your words\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}\
+{\listtext	\'95	}}

@@ -11,7 +11,32 @@
     <noscript>
       <strong>We're sorry but language-learning-vue doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
+    <div id="app">
+<!--       <p>{{ suggestions }}</p>
+
+      <input v-model="userInput" v-on:keyup='getSuggestions'>
+      <button v-on:click="beginAddNewWord">Add new word</button>
+
+      <div v-if="displayAddNewWord">
+        <label for="add-new-word-definition">Definition</label>
+        <input id="add-new-word-definition" v-model="addNewWordDefinition">
+        <label for="add-new-word-definition">Part of speech</label>
+        <input id="add-new-word-part-of-speech" v-model="addNewWordPartOfSpeech">
+        <label for="add-new-word-definition">Tense</label>
+        <input id="add-new-word-tense" v-model="addNewWordTense">
+        <button v-on:click="submitAddNewWordForm">Add this word</button>
+      </div> -->
+      <!-- DISPLAY SUGGESTIONS -->
+      <ol>
+        <suggestion-component
+          v-for="suggestion in suggestions"
+          v-bind:word="suggestion"
+          v-bind:select-suggestion="addWordToLexicon"
+          v-bind:key="suggestion.id"
+        >
+        </suggestion-component>
+      </ol>
+    </div>
+    <!-- built files will be auto injected-->
   </body>
 </html>
