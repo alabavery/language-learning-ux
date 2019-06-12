@@ -5,7 +5,7 @@
             <input v-model="userInput" v-on:keyup='getSuggestions'>
         </label>
         <button v-on:click="beginAddNewWord">Add new word</button>
-        <SuggestionsContainer seed-string="userInput" />
+        <SuggestionsContainer v-bind:seed-string="userInput" />
     </div>
 </template>
 
