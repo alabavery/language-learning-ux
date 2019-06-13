@@ -1,5 +1,5 @@
 <template>
-    <div v-if="(seedString || '').length > 2">
+    <div>
         <h4>Suggestions:</h4>
         <ol>
             <Suggestion
@@ -17,15 +17,10 @@
     export default {
         name: "SuggestionsContainer",
         props: {
-          seedString: String,
+          suggestions: Array,
         },
         components: {
           Suggestion,
-        },
-        data: function () {
-          return {
-            suggestions: [],
-          };
         },
     }
 </script>
