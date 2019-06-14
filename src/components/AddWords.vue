@@ -8,7 +8,7 @@
         <AddNewWord
           v-if="displayAddNewWord"
           v-bind:str="userInput"
-          v-bind:onSubmit="addNewWordToDictionaryAndUserLexicon"
+          v-bind:onSubmit="restOfWordData => addNewWordToDictionaryAndUserLexicon(userInput, restOfWordData)"
         />
         <SuggestionsContainer v-if="displaySuggestions" v-bind:suggestions="suggestions" />
     </div>
@@ -58,9 +58,9 @@ export default {
       openAddNewWord: function () {
         this.displayAddNewWord = true;
       },
-      addNewWordToDictionaryAndUserLexicon: function (wordData) {
-        console.log("Made call to backend to add word to dictionary");
-        const newWord = wordData; // todo this will come from backend
+      addNewWordToDictionaryAndUserLexicon: function (wordString, wordData) {
+        console.log(`Made call to backend to add word to dictionary: str: ${wordString}, meaning:${wordData.meaning}, partOfSpeech:${wordData.partOfSpeech}`);
+        const newWord = { id: "newId", str: wordString, ...wordData }; // todo this will come from backend
         this.knownWords.push(newWord);
         this.addWordToUserLexicon(newWord.id);
       },

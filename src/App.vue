@@ -1,18 +1,34 @@
 <template>
   <div id="app">
     <!--<img alt="Vue logo" src="./assets/logo.png">-->
-    <AddWords msg="Welcome to Your Vue.js App"/>
+    <NavBar v-bind:onClickTab="changePageDisplayed" />
+    <AddAudio v-if="pageDisplayed==='addAudio'" />
+    <AddWords v-if="pageDisplayed==='addWords'"/>
   </div>
 </template>
 
 <script>
 import AddWords from './components/AddWords.vue';
+import AddAudio from './components/AddAudio.vue';
+import NavBar from './components/NavBar.vue';
 
 export default {
   name: 'app',
   components: {
+    AddAudio,
     AddWords,
-  }
+    NavBar,
+  },
+  data: function () {
+    return {
+      pageDisplayed: "addWords",
+    };
+  },
+  methods: {
+    changePageDisplayed: function (pageToChangeTo) {
+      this.pageDisplayed = pageToChangeTo;
+    },
+  },
 }
 </script>
 
