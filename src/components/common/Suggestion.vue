@@ -1,5 +1,5 @@
 <template>
-    <li>{{ displayWord(word) }}</li>
+    <li v-on:click="onClick">{{ displayWord(word) }}</li>
 </template>
 
 <script>
@@ -7,6 +7,7 @@
         name: "Suggestion",
         props: {
             word: Object,
+            onClick: Function,
         },
         methods: {
             displayWord: function(word) {

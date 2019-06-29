@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="add-new-word">
         <h4>Add New Word: {{ str }}</h4>
         <label>
             Meaning
@@ -63,6 +63,12 @@
                     return "Must enter a verb tense!";
                 }
             },
+            clear: function () {
+                this.meaning = null;
+                this.partOfSpeech = null;
+                this.verbTense = null;
+                this.validationMessage = null;
+            },
             submit: function () {
                 const validationError = this.validate();
                 if (validationError) {
@@ -70,10 +76,18 @@
                     return;
                 }
                 this.onSubmit({
+                    str: this.str,
                     meaning: this.meaning,
                     partOfSpeech: this.partOfSpeech,
                 });
+                this.clear();
             },
         },
     }
 </script>
+
+<style scoped>
+    #add-new-word {
+        border: 1px solid #2c3e50;
+    }
+</style>

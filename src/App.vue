@@ -1,15 +1,15 @@
 <template>
   <div id="app">
     <!--<img alt="Vue logo" src="./assets/logo.png">-->
-    <NavBar v-bind:onClickTab="changePageDisplayed" />
-    <AddAudio v-if="pageDisplayed==='addAudio'" />
-    <AddWords v-if="pageDisplayed==='addWords'"/>
+    <NavBar v-bind:onClickTab="changePageDisplayed" v-bind:pageDisplayed="pageDisplayed" />
+    <AddAudio v-bind:knownWords="knownWords" v-if="pageDisplayed==='addAudio'" />
+    <AddWords v-bind:knownWords="knownWords" v-if="pageDisplayed==='addWords'"/>
   </div>
 </template>
 
 <script>
-import AddWords from './components/AddWords.vue';
-import AddAudio from './components/AddAudio.vue';
+import AddWords from './components/AddWords/AddWords.vue';
+import AddAudio from './components/AddAudio/AddAudio.vue';
 import NavBar from './components/NavBar.vue';
 
 export default {
@@ -19,9 +19,19 @@ export default {
     AddWords,
     NavBar,
   },
+  mounted: function () {
+    console.log("Called backend to get all known words for language");
+    this.knownWords = [
+      { str: "cat", partOfSpeech: "noun", meaning: "an animal" },
+      { str: "catch", partOfSpeech: "verb", tense: "present" },
+      { str: "pit", partOfSpeech: "noun" },
+      { str: "pitch", partOfSpeech: "verb", tense: "present" },
+    ];
+  },
   data: function () {
     return {
       pageDisplayed: "addWords",
+      knownWords: [],
     };
   },
   methods: {
@@ -39,6 +49,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

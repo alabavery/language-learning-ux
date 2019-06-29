@@ -6,6 +6,7 @@
                 v-for="suggestion in suggestions"
                 v-bind:word="suggestion"
                 v-bind:key="suggestion.id"
+                v-bind:onClick="() => onClickSuggestion(suggestion)"
             />
         </ol>
     </div>
@@ -17,7 +18,8 @@
     export default {
         name: "SuggestionsContainer",
         props: {
-          suggestions: Array,
+            suggestions: Array,
+            onClickSuggestion: Function,
         },
         components: {
           Suggestion,

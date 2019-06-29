@@ -8,22 +8,25 @@
         <AddNewWord
           v-if="displayAddNewWord"
           v-bind:str="userInput"
-          v-bind:onSubmit="restOfWordData => addNewWordToDictionaryAndUserLexicon(userInput, restOfWordData)"
+          v-bind:onSubmit="addNewWordToDictionaryAndUserLexicon"
         />
         <SuggestionsContainer v-if="displaySuggestions" v-bind:suggestions="suggestions" />
     </div>
 </template>
 
 <script>
-import SuggestionsContainer from './SuggestionsContainer.vue';
-import AddNewWord from './AddNewWord.vue';
+import SuggestionsContainer from '../common/SuggestionsContainer.vue';
+import AddNewWord from '../common/AddNewWord.vue';
+import { addNewWordToDictionary } from "../../functions/addWords";
 
 export default {
     name: 'AddWords',
+    props: {
+        knownWords: Array,
+    },
     data: function () {
       return {
         userInput: null,
-        knownWords: [],
         suggestions: [],
         displayAddNewWord: false,
       };
@@ -32,15 +35,6 @@ export default {
       displaySuggestions: function () {
         return (this.userInput || "").length > 2;
       },
-    },
-    mounted: function () {
-      console.log("Called backend to get all known words for language");
-      this.knownWords = [
-          { str: "cat", partOfSpeech: "noun", meaning: "an animal" },
-          { str: "catch", partOfSpeech: "verb", tense: "present" },
-          { str: "pit", partOfSpeech: "noun" },
-          { str: "pitch", partOfSpeech: "verb", tense: "present" },
-        ];
     },
     methods: {
       setSuggestions: function () {
@@ -58,15 +52,10 @@ export default {
       openAddNewWord: function () {
         this.displayAddNewWord = true;
       },
-      addNewWordToDictionaryAndUserLexicon: function (wordString, wordData) {
-        console.log(`Made call to backend to add word to dictionary: str: ${wordString}, meaning:${wordData.meaning}, partOfSpeech:${wordData.partOfSpeech}`);
-        const newWord = { id: "newId", str: wordString, ...wordData }; // todo this will come from backend
+      addNewWordToDictionaryAndUserLexicon: function (wordData) {
+        const newWord = addNewWordToDictionary(wordData, true, 'userId');
         this.knownWords.push(newWord);
-        this.addWordToUserLexicon(newWord.id);
       },
-      addWordToUserLexicon: function (wordId) {
-        console.log(`Added word ${wordId} to user [insert user id] lexicon`);
-      }
     },
     components: {
       SuggestionsContainer,
