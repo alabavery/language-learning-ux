@@ -34,6 +34,9 @@ export default {
     },
     props: {
       knownWords: Array,
+      userLexicon: Array,
+      addNewWordToDictionaryAndUserLexicon: Function,
+      addExistingWordToUserLexicon: Function,
     },
     data: function () {
       return {
@@ -73,34 +76,29 @@ export default {
             this.tokens.push(audioCurrentTime);
         },
         getWordsToResolve: function () {
-            // this method should use call(s) to the backend to determine what words in the
-            // transcript our program doesn't know already
-            // should return an array of objects, where each contains necessary info for
-            // displaying the string relative to the rest of the transcript, words we think
-            // it might be, and possibly more
-            return [
-                {
-                    str: 'this',
-                    locationInTranscript: 7, // use the index of the character in the whole transcript string???
-                    suggestions: [
-                        { id: 'this1Id', str: 'this', partOfSpeech: 'verb', tense: 'present' },
-                        { id: 'this2Id', str: 'this', partOfSpeech: 'noun' },
-                    ],
-                },
-                {
-                    str: 'through',
-                    locationInTranscript: 39,
-                    suggestions: [],
-                },
-                {
-                    str: 'arrows',
-                    locationInTranscript: 55,
-                    suggestions: [
-                        { id: 'arrows1Id', str: 'arrows', partOfSpeech: 'verb', tense: 'present' },
-                        { id: 'arrows2Id', str: 'arrows', partOfSpeech: 'noun' },
-                    ],
-                },
-            ];
+            // return [
+            //     {
+            //         str: 'this',
+            //         locationInTranscript: 7, // use the index of the character in the whole transcript string???
+            //         suggestions: [
+            //             { id: 'this1Id', str: 'this', partOfSpeech: 'verb', tense: 'present' },
+            //             { id: 'this2Id', str: 'this', partOfSpeech: 'noun' },
+            //         ],
+            //     },
+            //     {
+            //         str: 'through',
+            //         locationInTranscript: 39,
+            //         suggestions: [],
+            //     },
+            //     {
+            //         str: 'arrows',
+            //         locationInTranscript: 55,
+            //         suggestions: [
+            //             { id: 'arrows1Id', str: 'arrows', partOfSpeech: 'verb', tense: 'present' },
+            //             { id: 'arrows2Id', str: 'arrows', partOfSpeech: 'noun' },
+            //         ],
+            //     },
+            // ];
         },
         displayResolver: function () {
             this.showResolver = true;

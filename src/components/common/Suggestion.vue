@@ -1,5 +1,12 @@
 <template>
-    <li v-on:click="onClick">{{ displayWord(word) }}</li>
+    <li v-on:click="onClickMe">
+        <span>
+            {{ displayWord(word) }}
+        </span>
+        <span>
+            {{ word.userKnows ? '(known)' : ''}}
+        </span>
+    </li>
 </template>
 
 <script>
@@ -10,8 +17,16 @@
             onClick: Function,
         },
         methods: {
+            onClickMe: function () {
+              if (this.word.userKnows) {
+                return;
+              }
+              this.onClick();
+            },
             displayWord: function(word) {
-                const partOfSpeechDisplay = word.partOfSpeech === 'verb' ? `${word.partOfSpeech}: ${word.tense || '-'}` : word.partOfSpeech;
+                const partOfSpeechDisplay = word.partOfSpeech === 'verb'
+                  ? `${word.partOfSpeech}: ${word.tense || '-'}`
+                  : word.partOfSpeech;
                 return `${word.str} (${partOfSpeechDisplay || '-'}) ${word.meaning || '-'}`;
             },
         }
