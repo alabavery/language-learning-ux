@@ -1,4 +1,7 @@
-import { splitTranscriptIntoStrings } from '../resolver';
+import { splitTranscriptIntoStrings, MIN_REQUIRED_LEN_TO_RESOLVE } from '../resolver';
+
+const filterInCaseMinLengthChanges = expectedResults =>
+    expectedResults.filter(result => result.rawStr.length >= MIN_REQUIRED_LEN_TO_RESOLVE);
 
 describe('splitTranscriptIntoStrings', () => {
    it('a b', () => {
@@ -9,78 +12,120 @@ describe('splitTranscriptIntoStrings', () => {
    it('abc def', () => {
       expect(
           splitTranscriptIntoStrings('abc def'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 0 },
-         { rawStr: 'def', locationInTranscript: 4 }
-      ]);
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+             { rawStr: 'abc', locationInTranscript: 0 },
+             { rawStr: 'def', locationInTranscript: 4 }
+          ]),
+      );
    });
-   it('abc  def', () => {
+   it('.abc. .def.', () => {
       expect(
-          splitTranscriptIntoStrings('abc  def'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 0 },
-         { rawStr: 'def', locationInTranscript: 5 }
-      ]);
+          splitTranscriptIntoStrings('.abc. .def.'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+             { rawStr: 'abc', locationInTranscript: 0 },
+             { rawStr: 'def', locationInTranscript: 4 }
+          ]),
+      );
    });
-   it('abc.  .def', () => {
+   it('abcd efgh', () => {
       expect(
-          splitTranscriptIntoStrings('abc.  .def'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 0 },
-         { rawStr: 'def', locationInTranscript: 7 }
-      ]);
+          splitTranscriptIntoStrings('abcd efgh'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 0 },
+            { rawStr: 'efgh', locationInTranscript: 5 }
+         ]),
+       );
    });
-   it('abc.  .def.', () => {
+   it('abcd  efgh', () => {
       expect(
-          splitTranscriptIntoStrings('abc.  .def.'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 0 },
-         { rawStr: 'def', locationInTranscript: 7 }
-      ]);
+          splitTranscriptIntoStrings('abcd  efgh'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 0 },
+            { rawStr: 'efgh', locationInTranscript: 6 }
+         ]),
+       );
    });
-   it('.abc.  .def.', () => {
+   it('abcd.  .efgh', () => {
       expect(
-          splitTranscriptIntoStrings('.abc.  .def.'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 1 },
-         { rawStr: 'def', locationInTranscript: 8 }
-      ]);
+          splitTranscriptIntoStrings('abcd.  .efgh'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 0 },
+            { rawStr: 'efgh', locationInTranscript: 8 }
+         ]),
+       );
    });
-   it('.abc.  .def. hello', () => {
+   it('abcd.  .efgh.', () => {
       expect(
-          splitTranscriptIntoStrings('.abc.  .def. hello'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 1 },
-         { rawStr: 'def', locationInTranscript: 8 },
-         { rawStr: 'hello', locationInTranscript: 13 }
-      ]);
+          splitTranscriptIntoStrings('abcd.  .efgh.'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 0 },
+            { rawStr: 'efgh', locationInTranscript: 8 }
+         ]),
+       );
+   });
+   it('.abcd.  .efgh.', () => {
+      expect(
+          splitTranscriptIntoStrings('.abcd.  .efgh.'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 1 },
+            { rawStr: 'efgh', locationInTranscript: 9 }
+         ]),
+       );
+   });
+   it('.abcd.  .efgh. hello', () => {
+      expect(
+          splitTranscriptIntoStrings('.abcd.  .efgh. hello'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 1 },
+            { rawStr: 'efgh', locationInTranscript: 9 },
+            { rawStr: 'hello', locationInTranscript: 15 }
+         ]),
+       );
    });
    it('         ', () => {
       expect(
           splitTranscriptIntoStrings('         '),
       ).toEqual([]);
    });
-   it('"abc"', () => {
+   it('"abcd"', () => {
       expect(
-          splitTranscriptIntoStrings('"abc"'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 1 },
-      ]);
+          splitTranscriptIntoStrings('"abcd"'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 1 },
+         ]),
+       );
    });
-   it('"abc." Hello', () => {
+   it('"abcd." Hello', () => {
       expect(
-          splitTranscriptIntoStrings('"abc." Hello'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 1 },
-         { rawStr: 'Hello', locationInTranscript: 7 },
-      ]);
+          splitTranscriptIntoStrings('"abcd." Hello'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 1 },
+            { rawStr: 'Hello', locationInTranscript: 8 },
+         ]),
+       );
    });
-   it('"abc." Hello', () => {
+   it('"abcd." Hello', () => {
       expect(
-          splitTranscriptIntoStrings('"abc." "Hello"'),
-      ).toEqual([
-         { rawStr: 'abc', locationInTranscript: 1 },
-         { rawStr: 'Hello', locationInTranscript: 8 },
-      ]);
+          splitTranscriptIntoStrings('"abcd." "Hello"'),
+      ).toEqual(
+          filterInCaseMinLengthChanges([
+            { rawStr: 'abcd', locationInTranscript: 1 },
+            { rawStr: 'Hello', locationInTranscript: 9 },
+         ]),
+       );
    });
+});
+
+describe('getResolveData', () => {
+
 });

@@ -1,36 +1,40 @@
-const MIN_REQUIRED_LEN_TO_RESOLVE = 3;
-const MOST_FREQUENT_STRINGS_IN_LANGUAGE = [ /*pretend it's filled out */];
-/**
- * return array of:
- *	{
- *		str: <raw str from transcript, casing and all>,
- *		locationInTranscript: <index of beginning of str>,
- *		suggestions: word[],
- *	}
- **/
-export default function getResolveData(transcript, knownWords, mostFrequentStrings) {
-  const returned = [];
-  // get known words that match (normalized) str
-  // if multiple, must resolve
-  // if one, find all occurences of str in top 5000 most frequenct words in language
-  // if only one, no need to resolve
-  // if multiple, need to resolve
-  const stringsAndLocationsInTranscript = splitTranscriptIntoStrings(transcript);
+export const MIN_REQUIRED_LEN_TO_RESOLVE = 4;
 
-  for (let i = 0; i < stringsAndLocationsInTranscript.length; i++) {
-    const current = stringsAndLocationsInTranscript[i];
-    const knownWordsForStr = knownWords.filter(word => word.str === current.rawStr.toLowerCase());
-    if (knownWordsForStr.length > 1) {
-      returned.push({ ...current, suggestions: knownWordsForStr });
-    } else if (knownWordsForStr === 0) {
-      returned.push({ ...current, suggestions: [] });
-    } else {
-      if (mostFrequentStrings.filter(str => str === current.rawStr.toLowerCase()).length > 1) {
-        returned.push({ ...current, suggestions: knownWordsForStr });
-      }
+export function getResolveDataForTranscript(transcript, knownWords, mostFrequentStrings) {
+  const stringsAndLocationsInTranscript = splitTranscriptIntoStrings(transcript);
+  console.log("stringsAndLocationsInTranscript", stringsAndLocationsInTranscript);
+  return stringsAndLocationsInTranscript.reduce((dataForThoseNeedingResolving, rawStrAndLocation) => {
+    const resolveData = getResolveDataForStr(rawStrAndLocation.rawStr, knownWords, mostFrequentStrings);
+    if (resolveData) {
+      return dataForThoseNeedingResolving.concat(resolveData);
     }
+  }, []);
+}
+
+/**
+ * Return an array of words if the str needs resolving.  This can be an empty array if the
+ * str needs resolving but there are no known words to suggest.
+ * @param rawStr
+ * @param knownWords
+ * @param mostFrequentStrings
+ * @returns {Array|*}
+ */
+export function getResolveDataForStr(rawStr, knownWords, mostFrequentStrings) {
+  const standardizedStr = rawStr.toLowerCase();
+  const knownWordsForStr = knownWords.filter(word => word.str === standardizedStr);
+  // if there are no known words, the user must create a new word for this
+  if (knownWordsForStr.length === 0) {
+    return { rawStr, suggestions: [] };
   }
-  return returned;
+  // if there are multiple known words, user must resolve which of them it is
+  if (knownWordsForStr.length > 1) {
+    return { rawStr, suggestions: knownWordsForStr };
+  }
+  // if there is a single known word, but there are multiple strings in the top frequent strings
+  // that match this one, there's a chance it is one of those others, so still need resolving
+  if (mostFrequentStrings.filter(str => str === standardizedStr).length > 1) {
+    return { rawStr, suggestions: knownWordsForStr };
+  }
 }
 
 const getRawStr = (transcript, lastSpaceOrPunctuation, end) =>
@@ -42,7 +46,7 @@ export function splitTranscriptIntoStrings(transcript) {
   let i = 0;
   while (i < transcript.length) {
     if ([' ', '.', ',', '"'].includes(transcript[i])) {
-      if (i - lastSpaceOrPunctuation >= 3) {
+      if (i - lastSpaceOrPunctuation > MIN_REQUIRED_LEN_TO_RESOLVE) {
         returned.push({
           rawStr: getRawStr(transcript, lastSpaceOrPunctuation, i),
           locationInTranscript: lastSpaceOrPunctuation + 1,
@@ -50,7 +54,7 @@ export function splitTranscriptIntoStrings(transcript) {
       }
       lastSpaceOrPunctuation = i;
     } else if (i + 1 === transcript.length) {
-      if (i - lastSpaceOrPunctuation >= 3) {
+      if (i - lastSpaceOrPunctuation >= MIN_REQUIRED_LEN_TO_RESOLVE) {
         returned.push({
           rawStr: getRawStr(transcript, lastSpaceOrPunctuation, i + 1),
           locationInTranscript: lastSpaceOrPunctuation + 1,

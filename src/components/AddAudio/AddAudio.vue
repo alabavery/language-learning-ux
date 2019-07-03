@@ -24,6 +24,8 @@
 import Parsing from "./Parsing/Parsing";
 import Uploading from "./Uploading/Uploading";
 import WordsResolver from "./Resolving/WordsResolver";
+import { getResolveDataForTranscript } from "../../functions/resolver";
+import MOST_FREQUENT_WORDS from '../../constants/frequent-strings/spanish';
 
 export default {
     name: "AddAudio",
@@ -61,7 +63,12 @@ export default {
         },
         onParsingComplete: function () {
             this.parsingCompleted = true;
-            const wordsToResolve = this.getWordsToResolve();
+
+            const wordsToResolve = getResolveDataForTranscript(
+                this.transcript,
+                this.knownWords,
+                MOST_FREQUENT_WORDS.SPANISH,
+            );
             if (wordsToResolve.length) {
                 this.wordsToResolve = wordsToResolve;
             } else {
@@ -74,31 +81,6 @@ export default {
         },
         recordToken: function (audioCurrentTime) {
             this.tokens.push(audioCurrentTime);
-        },
-        getWordsToResolve: function () {
-            // return [
-            //     {
-            //         str: 'this',
-            //         locationInTranscript: 7, // use the index of the character in the whole transcript string???
-            //         suggestions: [
-            //             { id: 'this1Id', str: 'this', partOfSpeech: 'verb', tense: 'present' },
-            //             { id: 'this2Id', str: 'this', partOfSpeech: 'noun' },
-            //         ],
-            //     },
-            //     {
-            //         str: 'through',
-            //         locationInTranscript: 39,
-            //         suggestions: [],
-            //     },
-            //     {
-            //         str: 'arrows',
-            //         locationInTranscript: 55,
-            //         suggestions: [
-            //             { id: 'arrows1Id', str: 'arrows', partOfSpeech: 'verb', tense: 'present' },
-            //             { id: 'arrows2Id', str: 'arrows', partOfSpeech: 'noun' },
-            //         ],
-            //     },
-            // ];
         },
         displayResolver: function () {
             this.showResolver = true;

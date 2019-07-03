@@ -2,7 +2,7 @@
     <div>
         <ContextDisplay
                 v-bind:transcript="transcript"
-                v-bind:string-to-highlight="wordsToResolve[resolvingWord].str"
+                v-bind:string-to-highlight="wordsToResolve[resolvingWord].rawStr"
                 v-bind:start-of-string-to-highlight="wordsToResolve[resolvingWord].locationInTranscript"
         />
         <SuggestionsContainer
