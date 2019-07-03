@@ -19,13 +19,13 @@ export default function getResolveData(transcript, knownWords, mostFrequentStrin
 
   for (let i = 0; i < stringsAndLocationsInTranscript.length; i++) {
     const current = stringsAndLocationsInTranscript[i];
-    const knownWordsForStr = knownWords.filter(word => word.str === current.standardizeStr);
+    const knownWordsForStr = knownWords.filter(word => word.str === current.rawStr.toLowerCase());
     if (knownWordsForStr.length > 1) {
       returned.push({ ...current, suggestions: knownWordsForStr });
     } else if (knownWordsForStr === 0) {
       returned.push({ ...current, suggestions: [] });
     } else {
-      if (mostFrequentStrings.filter(str => str === current.standardizedStr).length > 1) {
+      if (mostFrequentStrings.filter(str => str === current.rawStr.toLowerCase()).length > 1) {
         returned.push({ ...current, suggestions: knownWordsForStr });
       }
     }
@@ -33,26 +33,31 @@ export default function getResolveData(transcript, knownWords, mostFrequentStrin
   return returned;
 }
 
-function splitTranscriptIntoStrings(transcript) {
+const getRawStr = (transcript, lastSpaceOrPunctuation, end) =>
+    transcript.slice(lastSpaceOrPunctuation + 1, end);
+
+export function splitTranscriptIntoStrings(transcript) {
   const returned = [];
-  let lastSpaceOrPunctuation = 0;
-  for (let i = 0; i < transcript.length; i++) {
-    if ([' ', '.', ','].includes(transcript[i])) {
-      // if (i - lastSpaceOrPunctuation >= MIN_REQUIRED_LEN_TO_RESOLVE) {
-      if (stringIsAcceptable(transcript.slice(lastSpaceOrPunctuation + 1, i))) {
+  let lastSpaceOrPunctuation = -1;
+  let i = 0;
+  while (i < transcript.length) {
+    if ([' ', '.', ',', '"'].includes(transcript[i])) {
+      if (i - lastSpaceOrPunctuation >= 3) {
         returned.push({
+          rawStr: getRawStr(transcript, lastSpaceOrPunctuation, i),
           locationInTranscript: lastSpaceOrPunctuation + 1,
-          str: transcript.slice(lastSpaceOrPunctuation + 1, i),
-          standardizedStr: transcript.slice(lastSpaceOrPunctuation + 1, i).toLowerCase()// standardizeStr(transcript.slice(lastSpaceOrPunctuation + 1, i))
         });
       }
       lastSpaceOrPunctuation = i;
+    } else if (i + 1 === transcript.length) {
+      if (i - lastSpaceOrPunctuation >= 3) {
+        returned.push({
+          rawStr: getRawStr(transcript, lastSpaceOrPunctuation, i + 1),
+          locationInTranscript: lastSpaceOrPunctuation + 1,
+        });
+      }
     }
+    i += 1;
   }
   return returned;
-}
-
-function stringIsAcceptable(str) {
-  const s = [',', '.', ';', '/'].reduce((strSoFar, charToRemove) => strSoFar.replace(charToRemove, ''), str).trim();
-  return s.length >= 3;
 }
