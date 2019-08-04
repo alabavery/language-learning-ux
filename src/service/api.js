@@ -30,4 +30,18 @@ export default {
       userId,
     });
   },
+  saveRawAudio: async (audio, transcript) => {
+    const form = new FormData();
+    form.append('audio', audio);
+    form.append('transcript', transcript);
+    return makePostCall('audio', form);
+  },
+  saveParsedAudio: async ({ audioId, transcript, clipEnds, phrases }) => {
+    return makePostCall('parse', {
+      audioId,
+      transcript,
+      clipEnds,
+      phrases,
+    });
+  },
 };

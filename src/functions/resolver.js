@@ -1,14 +1,27 @@
 export const MIN_REQUIRED_LEN_TO_RESOLVE = 4;
 
-export function getResolveDataForTranscript(transcript, knownWords, mostFrequentStrings) {
-  const stringsAndLocationsInTranscript = splitTranscriptIntoStrings(transcript);
-  console.log("stringsAndLocationsInTranscript", stringsAndLocationsInTranscript);
-  return stringsAndLocationsInTranscript.reduce((dataForThoseNeedingResolving, rawStrAndLocation) => {
-    const resolveData = getResolveDataForStr(rawStrAndLocation.rawStr, knownWords, mostFrequentStrings);
-    if (resolveData) {
-      return dataForThoseNeedingResolving.concat(resolveData);
+export function getResolveDataForTranscript(
+    clipIdToTranscriptExcerpt, //  { [clipId]: { phraseId, phraseContent } }
+    knownWords,
+    mostFrequentStrings,
+  ) {
+  return Object.keys(clipIdToTranscriptExcerpt).reduce((clipIdToNeedResolvingMap, clipId) => {
+    // get { rawStr, locationInPhrase } for string in this phrase that is over threshold length
+    const stringsToSave = splitPhraseIntoStringsToSave(clipIdToTranscriptExcerpt[clipId].phraseContent);
+
+    const resolveData = stringsToSave.reduce((acc, s) => {
+      const resolveDataForS = getResolveDataForStr(s.rawStr, knownWords, mostFrequentStrings);
+      if (resolveDataForS) {
+        acc.push({ ...resolveDataForS, locationInPhrase: s.locationInPhrase })
+      }
+      return acc;
+    }, []);
+
+    if (resolveData.length) {
+      clipIdToNeedResolvingMap[clipId] = resolveData;
     }
-  }, []);
+    return clipIdToNeedResolvingMap;
+  }, {});
 }
 
 /**

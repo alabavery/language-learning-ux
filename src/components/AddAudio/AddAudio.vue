@@ -3,18 +3,18 @@
         <Uploading v-if="!uploadsCompleted" v-bind:onComplete="onUploadsComplete" />
         <Parsing
                 v-if="uploadsCompleted && !parsingCompleted"
-                v-bind:tokenizedTranscript="tokenizedTranscript"
+                v-bind:transcript="transcript"
                 v-bind:audio="audio"
-                v-bind:on-transcript-forward="recordToken"
+                v-bind:audio-id="audioId"
                 v-bind:on-parsing-complete="onParsingComplete"
         />
-        <div v-if="wordsToResolve.length && !showResolver">
+        <div v-if="Object.keys(resolveData).length && !showResolver">
             Do you mind helping us resolve some of the words from the transcript?
             <button v-on:click="displayResolver">Ok</button>
         </div>
         <WordsResolver
                 v-if="showResolver"
-                v-bind:words-to-resolve="wordsToResolve"
+                v-bind:resolve-data="resolveData"
                 v-bind:transcript="transcript"
         />
     </div>
@@ -24,8 +24,7 @@
 import Parsing from "./Parsing/Parsing";
 import Uploading from "./Uploading/Uploading";
 import WordsResolver from "./Resolving/WordsResolver";
-import { getResolveDataForTranscript } from "../../functions/resolver";
-import MOST_FREQUENT_WORDS from '../../constants/frequent-strings/spanish';
+import api from '../../service/api';
 
 export default {
     name: "AddAudio",
@@ -46,41 +45,34 @@ export default {
         parsingCompleted: false,
         transcript: null,
         audio: null,
-        tokens: [],
+        audioId: null,
         showResolver: false,
-        wordsToResolve: [],
+        // after parsing complete, create clips, and call method to determine which
+        // have words that need resolving.  Set this to
+        // { [clipId]: { phraseId, phraseContent, wordsToResolve } }
+        // where wordsToResolve is and array of { rawStr, suggestions }
+        resolveData: {},
       };
     },
     methods: {
-        onUploadsComplete: function (audio, transcript) {
-            console.log("AddAudio's onUpload's complete received audio and transcript of: ");
-            console.log(audio);
-            console.log(transcript);
+        /**
+         * As soon as the user has saved their transcript and selected an audio file, make the request to the backend
+         * to save the audio media and record.
+         * @param audio
+         * @param transcript
+         * @returns {Promise<void>}
+         */
+        onUploadsComplete: async function (audio, transcript) {
             this.audio = audio;
-            this.transcript = transcript || "Hello, this is a place holder.  Scroll through it with arrows.  See how.  It goes down. When you hit arrows.";
-            this.tokenizedTranscript = this.tokenizeTranscript();
+            this.transcript = transcript;
+            const res = await api.saveRawAudio(audio, transcript);
+            console.log("res", res);
+            this.audioId = res.id;
             this.uploadsCompleted = true;
         },
-        onParsingComplete: function () {
+        onParsingComplete: async function () {
             this.parsingCompleted = true;
 
-            const wordsToResolve = getResolveDataForTranscript(
-                this.transcript,
-                this.knownWords,
-                MOST_FREQUENT_WORDS.SPANISH,
-            );
-            if (wordsToResolve.length) {
-                this.wordsToResolve = wordsToResolve;
-            } else {
-                console.log("Completed!!!!!!!")
-            }
-        },
-        tokenizeTranscript: function () {
-            // todo make this smarter
-            return this.transcript.split('.');
-        },
-        recordToken: function (audioCurrentTime) {
-            this.tokens.push(audioCurrentTime);
         },
         displayResolver: function () {
             this.showResolver = true;

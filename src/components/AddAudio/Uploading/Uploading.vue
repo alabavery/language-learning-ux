@@ -27,8 +27,6 @@
         },
         methods: {
             onAudioUploadComplete: function (audio) {
-                console.log(`Uploading component's onAudioUploadComplete received audio ${audio}`);
-                console.log(audio);
                 if (this.transcriptUploadComplete) {
                     this.onComplete(audio, this.transcript);
                 } else {
@@ -37,7 +35,6 @@
                 }
             },
             onTranscriptUploadComplete: function (transcript) {
-                console.log(`Uploading component's onTranscriptUploadComplete received transcript ${transcript}`);
                 if (this.audioUploadComplete) {
                     this.onComplete(this.audio, transcript);
                 } else {
