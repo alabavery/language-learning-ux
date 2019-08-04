@@ -1,13 +1,13 @@
 <template>
     <div id="add-new-word">
-        <h4>Add New Word: {{ str }}</h4>
+        <h4>Add New Word: {{ wordData.str }}</h4>
         <label>
             Meaning
-            <input v-model="meaning">
+            <input v-model="wordData.meaning">
         </label>
         <label>
             Part of speech
-            <select v-model="partOfSpeech">
+            <select v-model="wordData.partOfSpeech">
                 <option value="noun">Noun</option>
                 <option value="verb">Verb</option>
                 <option value="adjective">Adjective</option>
@@ -16,7 +16,7 @@
         </label>
         <label v-if="displayVerbTense">
             Verb tense
-            <select v-model="verbTense">
+            <select v-model="wordData.verbTense">
                 <option value="past">Past</option>
                 <option value="present">Present</option>
                 <option value="future">Future</option>
@@ -37,15 +37,15 @@
         },
         data: function () {
             return {
-                meaning: null,
-                partOfSpeech: null,
-                verbTense: null,
                 validationMessage: null,
+                wordData: {
+                  str: this.str,
+                },
             };
         },
         computed: {
             displayVerbTense: function () {
-                return this.partOfSpeech === 'verb';
+                return this.wordData.partOfSpeech === 'verb';
             },
             displayValidationMessage: function () {
                 return !!this.validationMessage;
@@ -53,13 +53,13 @@
         },
         methods: {
             validate: function() {
-                if (!this.meaning) {
+                if (!this.wordData.meaning) {
                     return "Must enter a meaning!";
                 }
-                if (!this.partOfSpeech) {
+                if (!this.wordData.partOfSpeech) {
                     return "Must enter a part of speech!";
                 }
-                if (this.partOfSpeech === 'verb' && !this.verbTense) {
+                if (this.wordData.partOfSpeech === 'verb' && !this.wordData.verbTense) {
                     return "Must enter a verb tense!";
                 }
             },
@@ -69,16 +69,18 @@
                 this.verbTense = null;
                 this.validationMessage = null;
             },
-            submit: function () {
+            submit: async function () {
                 const validationError = this.validate();
                 if (validationError) {
                     this.validationMessage = validationError;
                     return;
                 }
-                this.onSubmit({
-                    str: this.str,
-                    meaning: this.meaning,
-                    partOfSpeech: this.partOfSpeech,
+                const { str, meaning, partOfSpeech, ...metadata } = this.wordData;
+                await this.onSubmit({
+                    str,
+                    meaning,
+                    partOfSpeech,
+                    metadata,
                 });
                 this.clear();
             },

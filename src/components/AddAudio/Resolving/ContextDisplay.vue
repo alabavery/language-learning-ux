@@ -1,12 +1,14 @@
 <template>
     <div>
-        <span>{{ transcript.slice(displayData.startOfDisplayed, startOfStringToHighlight) }}</span>
+        <span>{{ transcript.slice(displayData.start, startOfStringToHighlight) }}</span>
         <span id="string-to-highlight">{{ stringToHighlight }}</span>
-        <span>{{ transcript.slice(startOfStringToHighlight + stringToHighlight.length, displayData.endOfDisplayed) }}</span>
+        <span>{{ transcript.slice(startOfStringToHighlight + stringToHighlight.length, displayData.end) }}</span>
     </div>
 </template>
 
 <script>
+    import {getBookendsOfContext} from "../../../functions/contextDisplay";
+
     export default {
         name: "ContextDisplay",
         props: {
@@ -20,27 +22,10 @@
              * so find the first period in the transcript prior to the word in question, or start of transcript if
              * none
              * return index of start of displayed sentence(s), index of end
-             * @returns {{endOfDisplayed: NumberConstructor, startOfDisplayed: NumberConstructor}}
+             * @returns {{end: NumberConstructor, start: NumberConstructor}}
              */
             displayData: function () {
-                let beginningFinder = this.startOfStringToHighlight;
-                while (beginningFinder > 0) {
-                    beginningFinder -= 1;
-                    if (this.transcript[beginningFinder] === '.') {
-                        break;
-                    }
-                }
-                let endFinder = this.startOfStringToHighlight;
-                while (endFinder < this.transcript.length) {
-                    endFinder += 1;
-                    if (this.transcript[endFinder] === '.') {
-                        break;
-                    }
-                }
-                return {
-                    startOfDisplayed: beginningFinder,
-                    endOfDisplayed: endFinder,
-                };
+                return getBookendsOfContext(this.transcript, this.startOfStringToHighlight);
             },
         },
     }
