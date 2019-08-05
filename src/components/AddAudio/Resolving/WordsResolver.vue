@@ -2,14 +2,14 @@
     <div>
         <ContextDisplay
                 v-bind:transcript="transcript"
-                v-bind:string-to-highlight="wordsToResolve[resolvingWord].rawStr"
-                v-bind:start-of-string-to-highlight="wordsToResolve[resolvingWord].locationInTranscript"
+                v-bind:string-to-highlight="unresolvedStrings[resolvingWord].rawString"
+                v-bind:start-of-string-to-highlight="unresolvedStrings[resolvingWord].locationInTranscript"
         />
         <SuggestionsContainer
-                v-bind:suggestions="wordsToResolve[resolvingWord].suggestions"
+                v-bind:suggestions="suggestions[unresolvedStrings[resolvingWord].id]"
                 v-bind:on-click-suggestion="onClickSuggestion"
         />
-        <AddNewWord v-bind:str="wordsToResolve[resolvingWord].str" v-bind:on-submit="onSubmitAddNewWord" />
+        <AddNewWord v-bind:str="unresolvedStrings[resolvingWord].rawString" v-bind:on-submit="onSubmitAddNewWord" />
         <button v-on:click="onClickSkipWord">Skip this word</button>
         <div v-if="!!wordToQuestionUserAboutAddingToPersonalLexicon">
             Add this word to your personal lexicon?
@@ -34,7 +34,8 @@
         },
         props: {
             transcript: String,
-            wordsToResolve: Array, // Array of objects
+            unresolvedStrings: Array,
+            suggestions: Object, // this is { [unresolved-string-id]: KnownWord[] }
         },
         data: function () {
           return {

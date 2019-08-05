@@ -6,7 +6,7 @@
             <button v-on:click="speedUpAudio">Speed Up</button>
         </div>
         <TranscriptDisplay v-bind:tokenizedTranscript="tokenizedTranscript" v-bind:focusIndex="transcriptIndex"/>
-        <div v-if="complete">Upload these clip divisions? <button v-on:click="onClickComplete">Do it</button></div>
+        <div v-if="complete">Upload these clip divisions?<button v-on:click="onClickComplete">Do it</button></div>
     </div>
 </template>
 

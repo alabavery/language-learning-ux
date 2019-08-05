@@ -8,14 +8,15 @@
                 v-bind:audio-id="audioId"
                 v-bind:on-parsing-complete="onParsingComplete"
         />
-        <div v-if="Object.keys(resolveData).length && !showResolver">
+        <div v-if="unresolvedStrings.length && !showResolver">
             Do you mind helping us resolve some of the words from the transcript?
             <button v-on:click="displayResolver">Ok</button>
         </div>
         <WordsResolver
                 v-if="showResolver"
-                v-bind:resolve-data="resolveData"
+                v-bind:unresolved-strings="unresolvedStrings"
                 v-bind:transcript="transcript"
+                v-bind:suggestions="suggestions"
         />
     </div>
 </template>
@@ -47,11 +48,9 @@ export default {
         audio: null,
         audioId: null,
         showResolver: false,
-        // after parsing complete, create clips, and call method to determine which
-        // have words that need resolving.  Set this to
-        // { [clipId]: { phraseId, phraseContent, wordsToResolve } }
-        // where wordsToResolve is and array of { rawStr, suggestions }
-        resolveData: {},
+
+        unresolvedStrings: [],
+        suggestions: {},
       };
     },
     methods: {
@@ -71,8 +70,13 @@ export default {
             this.uploadsCompleted = true;
         },
         onParsingComplete: async function () {
+            console.log("called onParsingComplete");
             this.parsingCompleted = true;
-
+            const resolveData = await api.getResolveData(this.audioId);
+            this.unresolvedStrings = resolveData.unresolvedStrings;
+            this.transcript = resolveData.transcript;
+            this.suggestions = resolveData.suggestions;
+            console.log({ resolveData });
         },
         displayResolver: function () {
             this.showResolver = true;

@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000';
 
-async function makeGetCall(url) {
-  return (await axios.get(`${BASE_URL}/${url}`)).data;
+async function makeGetCall(url, queryParams) {
+  return (await axios.get(`${BASE_URL}/${url}`, { params: queryParams || {}})).data;
 }
 
 async function makePostCall(url, body) {
@@ -44,4 +44,5 @@ export default {
       phrases,
     });
   },
+  getResolveData: async audioId => makeGetCall(`parse`, { audioId }),
 };
