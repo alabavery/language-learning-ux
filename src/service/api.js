@@ -45,4 +45,13 @@ export default {
     });
   },
   getResolveData: async audioId => makeGetCall(`parse`, { audioId }),
+  /**
+   * This is used when user is resolving strings from their transcript.
+   * @param unresolvedStringId
+   * @param wordId
+   * @returns {Promise<void>}
+   */
+  resolveUnresolvedString: async (unresolvedStringId, wordId) => {
+
+  },
 };

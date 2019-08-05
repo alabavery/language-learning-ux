@@ -3,7 +3,7 @@
         <ContextDisplay
                 v-bind:transcript="transcript"
                 v-bind:string-to-highlight="unresolvedStrings[resolvingWord].rawString"
-                v-bind:start-of-string-to-highlight="unresolvedStrings[resolvingWord].locationInTranscript"
+                v-bind:start-of-string-to-highlight="unresolvedStrings[resolvingWord].locationInText"
         />
         <SuggestionsContainer
                 v-bind:suggestions="suggestions[unresolvedStrings[resolvingWord].id]"
@@ -23,7 +23,7 @@
     import AddNewWord from "../../common/AddNewWord";
     import SuggestionsContainer from "../../common/SuggestionsContainer";
     import ContextDisplay from "./ContextDisplay";
-    import { addNewWordToDictionary, addWordToUserLexicon } from "../../../functions/addWords";
+    import api from '../../../service/api';
 
     export default {
         name: "WordsResolver",
@@ -45,14 +45,26 @@
         },
         methods: {
             onSubmitAddNewWord: async function (wordData) {
-                this.wordToQuestionUserAboutAddingToPersonalLexicon = await addNewWordToDictionary(wordData, false);
+                const newWord = await api.addNewWordToDictionary(wordData, false);
+                await api.resolveUnresolvedString(
+                    this.unresolvedStrings[this.resolvingWord].id,
+                    newWord.id,
+                );
+                this.wordToQuestionUserAboutAddingToPersonalLexicon = newWord;
+
             },
-            onClickSuggestion: function (word) {
-                // nothing to do in terms of adding to dictionary, since, if we are suggesting it, it already exists
+            onClickSuggestion: async function (word) {
+                await api.resolveUnresolvedString(
+                    this.unresolvedStrings[this.resolvingWord].id,
+                    word.id,
+                );
                 this.wordToQuestionUserAboutAddingToPersonalLexicon = word;
             },
-            onClickAddNewlyCreatedWordToPersonalLexicon: function () {
-                addWordToUserLexicon(this.wordToQuestionUserAboutAddingToPersonalLexicon.id, 'userId');
+            onClickAddNewlyCreatedWordToPersonalLexicon: async function () {
+                await api.addExistingWordToUserLexicon(
+                    this.wordToQuestionUserAboutAddingToPersonalLexicon.id,
+                    'userId',
+                );
                 this.wordToQuestionUserAboutAddingToPersonalLexicon = null;
                 this.resolvingWord += 1;
             },
@@ -61,15 +73,7 @@
                 this.resolvingWord += 1;
             },
             onClickSkipWord: function () {
-
-            },
-            /**
-             * Transcript is split into phrases that we are targeting for
-             * a given clip.  When user finishes resolving words for a given
-             * phrase, make call to backend to mark that clip as resolved/usable.
-             */
-            onFinishClipTranscript: async function() {
-
+                this.resolvingWord += 1;
             },
         },
     }
