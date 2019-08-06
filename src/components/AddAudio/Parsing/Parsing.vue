@@ -6,13 +6,15 @@
             <button v-on:click="speedUpAudio">Speed Up</button>
         </div>
         <TranscriptDisplay v-bind:tokenizedTranscript="tokenizedTranscript" v-bind:focusIndex="transcriptIndex"/>
-        <div v-if="complete">Upload these clip divisions?<button v-on:click="onClickComplete">Do it</button></div>
+        <div v-if="complete">
+            Upload these clip divisions?
+            <button v-on:click="onConfirmUploadDivisions">Do it</button>
+        </div>
     </div>
 </template>
 
 <script>
     import TranscriptDisplay from './TranscriptDisplay';
-    import api from '../../../service/api';
 
     export default {
         name: "Parsing",
@@ -53,6 +55,9 @@
             };
         },
         methods: {
+            onConfirmUploadDivisions: async function () {
+                await this.onParsingComplete(this.clipEnds, this.tokenizedTranscript);
+            },
             tokenizeTranscript: function () {
                 const split = this.transcript.split('.');
                 // if you split and the last character is a '.', you will have an empty string for the last phrase
@@ -96,15 +101,6 @@
             },
             recordClipEnd: function (audioCurrentTime) {
                 this.clipEnds.push(audioCurrentTime);
-            },
-            onClickComplete: async function () {
-                await api.saveParsedAudio({
-                    audioId: this.audioId,
-                    transcript: this.transcript,
-                    clipEnds: this.clipEnds,
-                    phrases: this.tokenizedTranscript,
-                });
-                await this.onParsingComplete();
             },
             /**
              * Todo implement this method - should undo the last token and go back to the

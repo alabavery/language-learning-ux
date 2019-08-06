@@ -1,8 +1,8 @@
 <template>
     <div>
-        <span>{{ transcript.slice(displayData.start, startOfStringToHighlight) }}</span>
+        <span>{{ clipText.slice(displayData.start, startOfStringToHighlight) }}</span>
         <span id="string-to-highlight">{{ stringToHighlight }}</span>
-        <span>{{ transcript.slice(startOfStringToHighlight + stringToHighlight.length, displayData.end) }}</span>
+        <span>{{ clipText.slice(startOfStringToHighlight + stringToHighlight.length, displayData.end) }}</span>
     </div>
 </template>
 
@@ -12,7 +12,7 @@
     export default {
         name: "ContextDisplay",
         props: {
-            transcript: String,
+            clipText: String,
             stringToHighlight: String,
             startOfStringToHighlight: Number,
         },
@@ -25,7 +25,7 @@
              * @returns {{end: NumberConstructor, start: NumberConstructor}}
              */
             displayData: function () {
-                return getBookendsOfContext(this.transcript, this.startOfStringToHighlight);
+                return getBookendsOfContext(this.clipText, this.startOfStringToHighlight);
             },
         },
     }

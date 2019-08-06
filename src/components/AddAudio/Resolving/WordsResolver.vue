@@ -1,19 +1,22 @@
 <template>
     <div>
         <ContextDisplay
-                v-bind:transcript="transcript"
-                v-bind:string-to-highlight="unresolvedStrings[resolvingWord].rawString"
-                v-bind:start-of-string-to-highlight="unresolvedStrings[resolvingWord].locationInText"
+                v-bind:clip-text="clip.text"
+                v-bind:string-to-highlight="unresolvedStrings[resolvingUnresolvedString].rawString"
+                v-bind:start-of-string-to-highlight="unresolvedStrings[resolvingUnresolvedString].locationInText"
         />
         <SuggestionsContainer
-                v-bind:suggestions="suggestions[unresolvedStrings[resolvingWord].id]"
+                v-bind:suggestions="suggestions[unresolvedStrings[resolvingUnresolvedString].id]"
                 v-bind:on-click-suggestion="onClickSuggestion"
         />
-        <AddNewWord v-bind:str="unresolvedStrings[resolvingWord].rawString" v-bind:on-submit="onSubmitAddNewWord" />
+        <AddNewWord
+                v-bind:str="unresolvedStrings[resolvingUnresolvedString].rawString"
+                v-bind:on-submit="onSubmitAddNewWord"
+        />
         <button v-on:click="onClickSkipWord">Skip this word</button>
         <div v-if="!!wordToQuestionUserAboutAddingToPersonalLexicon">
             Add this word to your personal lexicon?
-            <button v-on:click="onClickAddNewlyCreatedWordToPersonalLexicon">Yes</button>
+            <button v-on:click="onClickAddWordToUserLexicon">Yes</button>
             <button v-on:click="onClickDontAddNewlyCreatedWordToPersonalLexicon">No</button>
         </div>
     </div>
@@ -33,13 +36,15 @@
             SuggestionsContainer,
         },
         props: {
-            transcript: String,
+            clip: Object,
             unresolvedStrings: Array,
-            suggestions: Object, // this is { [unresolved-string-id]: KnownWord[] }
+            suggestions: Object, // keyed by unresolved string id
+            onFinishWordsInClip: Function,
+            userId: String,
         },
         data: function () {
           return {
-            resolvingWord: 0,
+            resolvingUnresolvedString: 0,
             wordToQuestionUserAboutAddingToPersonalLexicon: null,
           };
         },
@@ -47,34 +52,39 @@
             onSubmitAddNewWord: async function (wordData) {
                 const newWord = await api.addNewWordToDictionary(wordData, false);
                 await api.resolveUnresolvedString(
-                    this.unresolvedStrings[this.resolvingWord].id,
+                    this.unresolvedStrings[this.resolvingUnresolvedString].id,
                     newWord.id,
                 );
                 this.wordToQuestionUserAboutAddingToPersonalLexicon = newWord;
-
             },
             onClickSuggestion: async function (word) {
                 await api.resolveUnresolvedString(
-                    this.unresolvedStrings[this.resolvingWord].id,
+                    this.unresolvedStrings[this.resolvingUnresolvedString].id,
                     word.id,
                 );
                 this.wordToQuestionUserAboutAddingToPersonalLexicon = word;
             },
-            onClickAddNewlyCreatedWordToPersonalLexicon: async function () {
+            onClickAddWordToUserLexicon: async function () {
                 await api.addExistingWordToUserLexicon(
                     this.wordToQuestionUserAboutAddingToPersonalLexicon.id,
-                    'userId',
+                    this.userId,
                 );
                 this.wordToQuestionUserAboutAddingToPersonalLexicon = null;
-                this.resolvingWord += 1;
+                this.incrementResolvingWord();
             },
             onClickDontAddNewlyCreatedWordToPersonalLexicon: function () {
                 this.wordToQuestionUserAboutAddingToPersonalLexicon = null;
-                this.resolvingWord += 1;
+                this.incrementResolvingWord();
             },
             onClickSkipWord: function () {
-                this.resolvingWord += 1;
+                this.incrementResolvingWord();
             },
+            incrementResolvingWord: function () {
+                this.resolvingUnresolvedString += 1;
+                if (this.resolvingUnresolvedString === this.unresolvedStrings.length) {
+                    this.onFinishWordsInClip();
+                }
+            }
         },
     }
 </script>

@@ -21,9 +21,6 @@ export default {
     });
   },
   addNewWordToDictionary: async (wordData, alsoAddToUserLexicon, userId) => {
-    if (alsoAddToUserLexicon && !userId) {
-      throw new Error(`Must include a userId!`)
-    }
     return makePostCall('word/known-words', {
       wordData,
       alsoAddToUserLexicon,
@@ -51,7 +48,6 @@ export default {
    * @param wordId
    * @returns {Promise<void>}
    */
-  resolveUnresolvedString: async (unresolvedStringId, wordId) => {
-
-  },
+  resolveUnresolvedString: async (unresolvedStringId, wordId) =>
+      makePostCall(`parse/resolve`, { unresolvedStringId, wordId }),
 };

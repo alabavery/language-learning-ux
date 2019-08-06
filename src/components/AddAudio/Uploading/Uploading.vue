@@ -15,7 +15,7 @@
             TranscriptInput,
         },
         props: {
-          onComplete: Function,
+            onComplete: Function,
         },
         data: function () {
             return {

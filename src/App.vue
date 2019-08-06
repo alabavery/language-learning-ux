@@ -3,7 +3,8 @@
     <!--<img alt="Vue logo" src="./assets/logo.png">-->
     <NavBar
             v-bind:onClickTab="changePageDisplayed"
-            v-bind:pageDisplayed="pageDisplayed" />
+            v-bind:pageDisplayed="pageDisplayed"
+    />
     <AddAudio
             v-if="pageDisplayed==='addAudio'"
             v-bind:knownWords="knownWords"
@@ -11,6 +12,7 @@
             v-bind:add-new-word-to-dictionary="addNewWordToDictionary"
             v-bind:add-new-word-to-dictionary-and-user-lexicon="addNewWordToDictionaryAndUserLexicon"
             v-bind:add-existing-word-to-user-lexicon="addExistingWordToUserLexicon"
+            v-bind:user-id="userId"
     />
     <AddWords
             v-if="pageDisplayed==='addWords'"
@@ -18,6 +20,7 @@
             v-bind:user-lexicon="userLexicon"
             v-bind:add-new-word-to-dictionary-and-user-lexicon="addNewWordToDictionaryAndUserLexicon"
             v-bind:add-existing-word-to-user-lexicon="addExistingWordToUserLexicon"
+            v-bind:user-id="userId"
     />
   </div>
 </template>
@@ -27,6 +30,7 @@ import api from './service/api';
 import AddWords from './components/AddWords/AddWords.vue';
 import AddAudio from './components/AddAudio/AddAudio.vue';
 import NavBar from './components/NavBar.vue';
+import { DEV_ID } from './config';
 
 const MY_ID = 'd277b5ab-8bb3-4ec4-8cd8-e7ee97e9c4b7';
 
@@ -46,6 +50,7 @@ export default {
       pageDisplayed: "addWords",
       knownWords: [],
       userLexicon: [], // array of wordIds
+      userId: DEV_ID,
     };
   },
   methods: {
