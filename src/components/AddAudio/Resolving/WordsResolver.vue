@@ -82,6 +82,7 @@
             incrementResolvingWord: function () {
                 this.resolvingUnresolvedString += 1;
                 if (this.resolvingUnresolvedString === this.unresolvedStrings.length) {
+                    this.resolvingUnresolvedString = 0;
                     this.onFinishWordsInClip();
                 }
             }

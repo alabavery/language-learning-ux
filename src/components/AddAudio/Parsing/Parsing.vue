@@ -24,7 +24,7 @@
         props: {
             transcript: String,
             audio: File,
-            audioId: String,
+            audioId: Number,
             onParsingComplete: Function,
         },
         data: function () {

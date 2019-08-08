@@ -1,17 +1,17 @@
 <template>
     <div>
         <Uploading
-                v-if="!uploadsCompleted"
+                v-if="showUploading"
                 v-bind:onComplete="onUploadsComplete"
         />
         <Parsing
-                v-if="uploadsCompleted && !parsingCompleted"
+                v-if="showParsing"
                 v-bind:transcript="transcript"
                 v-bind:audio="audio"
                 v-bind:audio-id="audioId"
                 v-bind:on-parsing-complete="onParsingComplete"
         />
-        <div v-if="resolveData.length && !showResolver">
+        <div v-if="showQuestionAboutResolver">
             Do you mind helping us resolve some of the words from the transcript?
             <button v-on:click="displayResolver">Ok</button>
         </div>
@@ -23,6 +23,10 @@
                 v-bind:on-finish-words-in-clip="onResolverFinishesWordsInClip"
                 v-bind:user-id="userId"
         />
+        <div v-if="showDone">
+            Done!
+            <button v-on:click="displayUploading">Do another audio source?</button>
+        </div>
     </div>
 </template>
 
@@ -61,8 +65,13 @@ export default {
         // where items correspond to clips and are ordered in the order of the clips in the full audio, and
         // unresolvedStrings in each item are ordered in their order in their clip's text
         resolveData: [],
-        showResolver: false,
         resolvingClipIndex: 0,
+
+        showUploading: true,
+        showParsing: false,
+        showQuestionAboutResolver: false,
+        showResolver: false,
+        showDone: false,
       };
     },
     methods: {
@@ -78,7 +87,9 @@ export default {
             this.transcript = transcript;
             const res = await api.saveRawAudio(audio, transcript);
             this.audioId = res.id;
-            this.uploadsCompleted = true;
+
+            this.showUploading = false;
+            this.showParsing = true;
         },
         onParsingComplete: async function (clipEnds, tokenizedTranscript) {
             await api.saveParsedAudio({
@@ -87,14 +98,30 @@ export default {
                 clipEnds,
                 phrases: tokenizedTranscript,
             });
-            this.parsingCompleted = true;
+            this.showParsing = false;
             this.resolveData = await api.getResolveData(this.audioId);
+
+            if (this.resolveData.length) {
+                this.showQuestionAboutResolver = true;
+            } else {
+                this.showDone = true;
+            }
         },
         displayResolver: function () {
+            this.showQuestionAboutResolver = false;
             this.showResolver = true;
         },
         onResolverFinishesWordsInClip: function () {
             this.resolvingClipIndex += 1;
+
+            if (this.resolvingClipIndex === this.resolveData.length) {
+                this.showResolver = false;
+                this.showDone = true;
+            }
+        },
+        displayUploading: function () {
+            this.showDone = false;
+            this.showUploading = true;
         },
     },
 }
