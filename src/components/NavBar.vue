@@ -14,6 +14,13 @@
         >
             Add words
         </div>
+        <div
+                class="tab"
+                v-bind:style="{ ...getClickedUnClickedStyle('lessons') }"
+                v-on:click="() => onClick('lessons')"
+        >
+            Lessons
+        </div>
     </div>
 </template>
 

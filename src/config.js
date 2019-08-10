@@ -1,1 +1,1 @@
-export const DEV_ID = '1';
+export const DEV_ID = 1;

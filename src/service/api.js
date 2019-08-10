@@ -14,7 +14,6 @@ export default {
   getKnownWords: async () => makeGetCall('word/known-words'),
   getUserLexicon: async userId => makeGetCall(`word/user-lexicon/${userId}`),
   addExistingWordToUserLexicon: async (wordId, userId)  => {
-    console.log("api.addExistingWordToUserLexicon called with ", wordId, userId);
     return makePostCall(`word/user-lexicon`, {
       wordId,
       userId,
@@ -50,4 +49,9 @@ export default {
    */
   resolveUnresolvedString: async (unresolvedStringId, wordId) =>
       makePostCall(`parse/resolve`, { unresolvedStringId, wordId }),
+  getUserLessons: async userId => makeGetCall(`lesson`, { userId }),
+  getClipsToMakeLesson: async ({ userId, focusWordIds, thresholdForUserKnowledge, numOfClipsInLesson }) => makeGetCall(
+      `lesson/select-clips`,
+      { userId, focusWordIds, thresholdForUserKnowledge, numOfClipsInLesson },
+      ),
 };

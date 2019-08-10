@@ -22,6 +22,10 @@
             v-bind:add-existing-word-to-user-lexicon="addExistingWordToUserLexicon"
             v-bind:user-id="userId"
     />
+    <Lessons
+            v-if="pageDisplayed='lessons'"
+            v-bind:user-id="userId"
+    />
   </div>
 </template>
 
@@ -29,6 +33,7 @@
 import api from './service/api';
 import AddWords from './components/AddWords/AddWords.vue';
 import AddAudio from './components/AddAudio/AddAudio.vue';
+import Lessons from './components/Lessons/Lessons';
 import NavBar from './components/NavBar.vue';
 import { DEV_ID } from './config';
 
@@ -40,6 +45,7 @@ export default {
     AddAudio,
     AddWords,
     NavBar,
+    Lessons,
   },
   mounted: async function () {
     this.knownWords = await api.getKnownWords();
